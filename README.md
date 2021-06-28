@@ -2,6 +2,40 @@
 This project contains some code to perform simulated annealing and genetic algorithms, serially, using MPI and using CUDA respectively.
 
 Concrete implementations for the travelling salesman problem (TSP) and Rosenbrock function are provided.
+
+## TLDR
+To run the demo, simply execute `./run.sh`, or have a look at the scripts inside `./scripts/demo`. 
+
+To run the experiments, which take long, run `make` and all the scripts inside `./scripts/experiments`.
+
+## Run
+To run this project, you will need a standard C++ compiler (e.g. `g++`), an MPI compiler (e.g. `mpicxx`) and a CUDA compiler (e.g. `nvcc`).
+To build the project, simply type `make` in the `code` directory. If you want to only build a certain part of the program, you can alternatively use `make OPTION` where `OPTION` is one of `serial`, `mpi`, `cuda`. This allows you to compile only certain parts if you lack the compiler for the others.
+
+The code was compiled and tested on Linux Ubuntu with g++ -7.5.0, OpenMPI 4 and CUDA 10. The non-cuda code was also tested and verified on OSX with clang++ 12.0.5 and OpenMPI 4.1.
+
+### Run Modes
+There are two default run modes available, demo and experiments. The experiments option should run the code in the same way we did to generate the results for the report. This is the default option.
+
+You can then run the experiments using the scripts `run_all_exps.sh` (for MPI), `run_all_exps_serial.sh` (for serial) and `run_all_exps_cuda.sh` (for CUDA).
+
+Alternatively you can simply run `./bin/serial`, `mpirun -np PROCS ./bin/mpi` or `./bin/cuda`.
+
+The other option is to run a simple demo, which runs the methods on a simple problem, and prints out the results in a simple fashion. 
+To perform this, you must `make clean` first, and then run `DFLAGS=-DDEMO make` to compile with demo mode active.
+
+To run the demos, either simply run `./run.sh` or have a look at the `scripts/demo/run_demo*.sh` scripts.
+The structure of the demo is `./bin/command [iterations] [scaling]`, where `iterations` is the number of iterations you want to perform in total and scaling is one of:
+- "NONE" -> No scaling, all ranks will run `iterations` iterations
+- "FULL" -> Full scaling, each rank will run `iterations` / num_ranks iterations
+- \<integer> (e.g. i = 2) -> Each rank will run `iterations` / num_ranks * i iterations.
+
+The scaling argument is just applicable to the `mpi` program.
+
+
+To run the full demo, simply run `./run.sh`, which will compile the demo code, as well as run it.
+
+# Method Details
 ## Vocabulary and Terms
 In the following, as well as in the code, there are some commonly used terms:
 - Individual, Solution, Genome: A single solution instance that consists of `genome_size` numbers. This is represented by an `Individual<T>` in the code.
@@ -24,33 +58,8 @@ For MPI, each rank performed SA independently, and exchanged the best solution e
 
 For CUDA, we performed simulated annealing on a per thread basis for S iterations, then found the best solution in the block and saved it to global memory. Finally, we found the best block, and used that as the starting point for the next iteration. Empirically, S = 1 performed well.
 
-## Run
-To run this project, you will need a standard C++ compiler (e.g. `g++`), an MPI compiler (e.g. `mpicxx`) and a CUDA compiler (e.g. `nvcc`).
-To build the project, simply type `make` in the `code` directory. If you want to only build a certain part of the program, you can alternatively use `make OPTION` where `OPTION` is one of `serial`, `mpi`, `cuda`. This allows you to compile only certain parts if you lack the compiler for the others.
 
-The code was compiled and tested on Linux Ubuntu with g++ -7.5.0, OpenMPI 4 and CUDA 10. The non-cuda code was also tested and verified on OSX with clang++ 12.0.5 and OpenMPI 4.1.
-
-### Run Modes
-There are two default run modes available, demo and experiments. The experiments option should run the code in the same way we did to generate the results for the report. This is the default option.
-
-You can then run the experiments using the scripts `run_all_exps.sh` (for MPI), `run_all_exps_serial.sh` (for serial) and `run_all_exps_cuda.sh` (for CUDA).
-
-Alternatively you can simply run `./bin/serial`, `mpirun -np PROCS ./bin/mpi` or `./bin/cuda`.
-
-The other option is to run a simple demo, which runs the methods on a simple problem, and prints out the results in a simple fashion. 
-To perform this, you must `make clean` first, and then run `DFLAGS=-DDEMO make` to compile with demo mode active.
-
-To run the demos, have a look at the `scripts/demo/run_demo*.sh` scripts.
-The structure of the demo is `./bin/command [iterations] [scaling]`, where `iterations` is the number of iterations you want to perform in total and scaling is one of:
-- "NONE" -> No scaling, all ranks will run `iterations` iterations
-- "FULL" -> Full scaling, each rank will run `iterations` / num_ranks iterations
-- \<integer> (e.g. i = 2) -> Each rank will run `iterations` / num_ranks * i iterations.
-
-The scaling argument is just applicable to the `mpi` program.
-
-
-To run the full demo, simply run `./run.sh`, which will compile the demo code, as well as run it.
-## File Structure
+# File Structure
 ```
 ├── code
 │   ├── Makefile                    -> The makefile that actually builds the code.
@@ -94,7 +103,13 @@ The `demo` functions simply run the short demos.
 
 I've commented `./code/src/serial/main.cpp` somewhat to explain what those function do, and it mostly carries over to the other main files.
 
-## Acknowledgements
+
+
+The experiments can be performed by running the scripts inside `./scripts/experiments/*.sh`. 
+
+**Note: These experiments take quite long, so to just see if the code runs, rather just run the demo**
+
+# Acknowledgements
 NVIDIA's common `inc` folder (which is distributed as part of CUDA samples) is found inside `./code/src/CUDA/inc`. This was used as general cuda helper functions and the original can be found at:
 - [Here](https://developer.download.nvidia.com/compute/cuda/1.1-Beta/x86_website/samples.html)
 - [Github](https://github.com/NVIDIA/cuda-samples)
