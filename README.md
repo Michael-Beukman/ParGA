@@ -8,7 +8,7 @@ First, navigate to the code directory: `cd code`.
 
 To run the demo, simply execute `./run.sh`, or have a look at the scripts inside `./scripts/demo`. 
 
-To run the experiments, which take long, run `make` and all the scripts inside `./scripts/experiments`.
+To run the same experiments that we ran to get our results, which take long, run `make clean all` and all the scripts inside `./scripts/experiments`.
 
 ## Run
 To run this project, you will need a standard C++ compiler (e.g. `g++`), an MPI compiler (e.g. `mpicxx`) and a CUDA compiler (e.g. `nvcc`).
