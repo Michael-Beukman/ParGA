@@ -4,6 +4,8 @@ This project contains some code to perform simulated annealing and genetic algor
 Concrete implementations for the travelling salesman problem (TSP) and Rosenbrock function are provided.
 
 ## TLDR
+First, navigate to the code directory: `cd code`.
+
 To run the demo, simply execute `./run.sh`, or have a look at the scripts inside `./scripts/demo`. 
 
 To run the experiments, which take long, run `make` and all the scripts inside `./scripts/experiments`.
@@ -122,4 +124,4 @@ In the CUDA code itself, I used function pointers, and the way to specify which 
 
 In the code, where I used something specific, I reference it there.
 
-The report contains some more specific references to sources that I used.
+The report contains some more references to sources that I used.
