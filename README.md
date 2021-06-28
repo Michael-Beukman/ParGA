@@ -40,7 +40,7 @@ Alternatively you can simply run `./bin/serial`, `mpirun -np PROCS ./bin/mpi` or
 The other option is to run a simple demo, which runs the methods on a simple problem, and prints out the results in a simple fashion. 
 To perform this, you must `make clean` first, and then run `DFLAGS=-DDEMO make` to compile with demo mode active.
 
-To run the demos, have a look at the `scripts/run_demo*.sh` scripts.
+To run the demos, have a look at the `scripts/demo/run_demo*.sh` scripts.
 The structure of the demo is `./bin/command [iterations] [scaling]`, where `iterations` is the number of iterations you want to perform in total and scaling is one of:
 - "NONE" -> No scaling, all ranks will run `iterations` iterations
 - "FULL" -> Full scaling, each rank will run `iterations` / num_ranks iterations
@@ -48,6 +48,8 @@ The structure of the demo is `./bin/command [iterations] [scaling]`, where `iter
 
 The scaling argument is just applicable to the `mpi` program.
 
+
+To run the full demo, simply run `./run.sh`, which will compile the demo code, as well as run it.
 ## File Structure
 ```
 ├── code
