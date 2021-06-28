@@ -21,7 +21,7 @@
 #include "common/problems/salesman/annealing/AnnealingSalesman.h"
 #include "common/problems/salesman/validation/brute_force.h"
 #include "common/utils/utils.h"
-#define DO_SERIAL 0
+
 #ifdef DEMO
 #define EXP_VERBOSE 0
 const bool should_write = false;
@@ -37,9 +37,10 @@ const bool write_to_text_file = false;
 #endif
 
 std::string directory = "mpi_larger_problem_size";
-const std::string VERSION = "v38_mpi_good_exps_0627_test_corrected";
+const std::string VERSION = "v50_mpi";
 std::string date = get_date();
 
+// Serial classes that the MPI code uses.
 SimulatedAnnealingSalesman *serial = NULL;
 SimulatedAnnealingRosenbrock *serial_rosen = NULL;
 SalesmanPopulation *serial_salesman_pop = NULL;
@@ -175,6 +176,7 @@ void good_mpi_sa_exps(const ExperimentConfigs config) {
     } else if (config.which_exp == 4) {
         printf("SA, exp %d, problem = %s\n", config.which_exp, problem.c_str());
         // Strong scaling. Here we keep the workload constant (e.g. 1k iterations total) and scale up nodes.
+        // We also correct the number of iterations, for c from 1.0 to 4.0 to use iters / ranks * c
         directory = "exp4_strong_scaling_corrected";
         for (int problem_size = minSize; problem_size <= maxSize; problem_size *= mult) {
             for (int num_iters = 100 * 14; num_iters <= MAX_ITERS / 10 * 14; num_iters *= 10) {
@@ -308,6 +310,11 @@ void good_mpi_ga_exps(const ExperimentConfigs config) {
         delete serial_salesman_pop;
         serial_salesman_pop = NULL;
     }
+
+    if (serial_salesman_pop_rosen) {
+        delete serial_salesman_pop_rosen;
+        serial_salesman_pop_rosen = NULL;
+    }
 }
 
 void mpi_run_all_experiments_according_to_args(int argc, char **argv) {
@@ -430,13 +437,8 @@ Results<T> mpi_do_all_sa(const Problem &problem, mpi_get_annealing_pointer<T, Pr
 
         auto begin = std::chrono::high_resolution_clock::now();
         MPIAnnealing<T> *pop_ = get_annealing_ptr(problem_size, prob, numranks);
-#if DO_SERIAL
-        // if serial, take the serial class, to have a comparison with the serial implementation.
-        auto pop = pop_->serial_class;
-        pop->score_push_back = true;
-#else
+
         auto pop = pop_;
-#endif
         pop->init();
         auto end = std::chrono::high_resolution_clock::now();
 
@@ -470,11 +472,7 @@ Results<T> mpi_do_all_sa(const Problem &problem, mpi_get_annealing_pointer<T, Pr
         }
 #endif
 
-#if DO_SERIAL
-        delete pop_;
-#else
         delete pop;
-#endif
         return res;
     };
     Experiment<T> e("MPI, SA.\n" + prob_desc, "seeds_" + std::to_string(seed), func);

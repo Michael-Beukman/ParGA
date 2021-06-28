@@ -30,7 +30,7 @@ const bool write_to_text_file = false;
 // Where to save results
 std::string directory = "serial_test";
 // what version, determines specific folder path
-const std::string VERSION = "v32_serial_good_exps_0623_test";
+const std::string VERSION = "v50_serial";
 // the date.
 std::string date = get_date();
 

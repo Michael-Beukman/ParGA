@@ -29,7 +29,7 @@ const bool write_to_text_file = false;
 #endif
 
 std::string directory = "test_v1";
-const std::string VERSION = "v41_cuda_all_v4";
+const std::string VERSION = "v50_cuda";
 /**
  * @brief Runs experiments for the cuda code.
  *          It runs GA & SA on both TSP and Rosenbrock.
