@@ -63,6 +63,7 @@ For CUDA, we performed simulated annealing on a per thread basis for S iteration
 
 # File Structure
 ```
+├── report.pdf                      -> The report detailing our methods and results.
 ├── code
 │   ├── Makefile                    -> The makefile that actually builds the code.
 │   ├── obj                         -> Temporary object directory that contains the .o files from compilation.
